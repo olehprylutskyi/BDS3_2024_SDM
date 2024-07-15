@@ -1,0 +1,205 @@
+Wallace Session 2024-07-15
+================
+
+Please find below the R code history from your *Wallace* v2.1.1 session.
+
+You can reproduce your session results by running this R Markdown file
+in RStudio.
+
+Each code block is called a “chunk”, and you can run them either
+one-by-one or all at once by choosing an option in the “Run” menu at the
+top-right corner of the “Source” pane in RStudio.
+
+For more detailed information see <http://rmarkdown.rstudio.com>).
+
+### Package installation
+
+Wallace uses the following R packages that must be installed and loaded
+before starting.
+
+```{r}
+library(spocc)
+library(spThin)
+library(dismo)
+library(sf)
+library(ENMeval)
+library(wallace)
+```
+
+The *Wallace* session code .Rmd file is composed of a chain of module
+functions that are internal to *Wallace*. Each of these functions
+corresponds to a single module that the user ran during the session. To
+see the internal code for these module functions, click on the links in
+the .Rmd file. Users are encouraged to write custom code in the .Rmd
+directly to modify their analysis, and even modify the module function
+code to further customize. To see the source code for any module
+function, just type its name into the R console and press Return.
+
+```{r}
+# example:
+# just type the function name and press Return to see its source code
+# paste this code into a new script to edit it
+occs_queryDb
+```
+
+Your analyses are below.
+
+------------------------------------------------------------------------
+
+## Analysis for *Salamandra salamandra* (Ss)
+
+### Obtain Occurrence Data
+
+You searched the gbif database for *Salamandra salamandra*, limited to
+1000 records. You decided to remove occurrences without uncertainty
+information? TRUE
+
+```{r}
+# Query selected database for occurrence records
+queryDb_Ss <- occs_queryDb(
+  spNames = "Salamandra salamandra", 
+  occDb = "gbif", 
+  occNum = 1000,
+  RmUncertain = TRUE)
+occs_Ss <- queryDb_Ss$Salamandra_salamandra$cleaned
+```
+
+### Obtain environmental data
+
+Using Ecoclimate (<http://www.ecoclimate.org>) dataset at resolution of
+0.5 degrees.
+
+```{r}
+# R code to get environmental data from Ecoclimate
+envs_Ss <- envs_ecoClimate(
+  bcAOGCM = "CCSM",
+  bcScenario = "Present",
+  ecoClimSel = c(1, 2, 4, 7, 12)) 
+##Add envrionmental values to occurrences table
+occs_xy_Ss <- occs_Ss[c('longitude', 'latitude')]
+occs_vals_Ss <- as.data.frame(raster::extract(envs_Ss, occs_xy_Ss, cellnumbers = TRUE))
+# Remove duplicated same cell values
+occs_Ss <- occs_Ss[!duplicated(occs_vals_Ss[, 1]), ]
+occs_vals_Ss <- occs_vals_Ss[!duplicated(occs_vals_Ss[, 1]), -1]
+# remove occurrence records with NA environmental values
+occs_Ss <- occs_Ss[!(rowSums(is.na(occs_vals_Ss)) >= 1), ]
+# also remove variable value rows with NA environmental values
+occs_vals_Ss <- na.omit(occs_vals_Ss)
+# add columns for env variable values for each occurrence record
+occs_Ss <- cbind(occs_Ss, occs_vals_Ss)
+```
+
+### Process Occurrence Data
+
+Thinning the occurrences to 50 km
+
+```{r}
+# Thin occurrences 
+occs_Ss <- poccs_thinOccs(
+  occs = occs_Ss, 
+  thinDist = 50)
+```
+
+### Process environmental data
+
+Sampling of 1000 background points and corresponding environmental data
+using a “minimum convex polygon” method with a 0.5 degree buffer.
+
+```{r}
+# Generate background extent 
+bgExt_Ss <- penvs_bgExtent(
+  occs = occs_Ss,
+  bgSel = "minimum convex polygon",
+  bgBuf = 0.5)
+# Mask environmental data to provided extent
+bgMask_Ss <- penvs_bgMask(
+  occs = occs_Ss,
+  envs = envs_Ss,
+  bgExt = bgExt_Ss)
+# Sample background points from the provided area
+bgSample_Ss <- penvs_bgSample(
+  occs = occs_Ss,
+  bgMask =  bgMask_Ss,
+  bgPtsNum = 1000)
+# Extract values of environmental layers for each background point
+bgEnvsVals_Ss <- as.data.frame(raster::extract(bgMask_Ss,  bgSample_Ss))
+##Add extracted values to background points table
+bgEnvsVals_Ss <- cbind(scientific_name = paste0("bg_", "Salamandra salamandra"), bgSample_Ss,
+                            occID = NA, year = NA, institution_code = NA, country = NA,
+                            state_province = NA, locality = NA, elevation = NA,
+                            record_type = NA, bgEnvsVals_Ss)
+```
+
+### Partition occurrence data
+
+Partition occurrences and background points for model training and
+validation using “spatial block”, a spatial partition method with an
+aggregation factor of 2.
+
+```{r}
+# R code to get partitioned data
+groups_Ss <- part_partitionOccs(
+  occs = occs_Ss ,
+  bg =  bgSample_Ss, 
+  method = "block",
+  bgMask = bgMask_Ss,
+  aggFact = 2) 
+```
+
+### Build and Evaluate Niche Model
+
+Generating a species distribution model using the maxnet algorithm as
+implemented in ENMeval V2.0 (with clamping = FALSE). For tuning using
+LQHP feature classes and regularization multipliers in the 1, 2 range
+increasing by 1. Not using any categorical predictor variables.
+
+```{r}
+# Run maxent model for the selected species
+model_Ss <- model_maxent(
+  occs = occs_Ss,
+  bg = bgEnvsVals_Ss,
+  user.grp = groups_Ss, 
+  bgMsk = bgMask_Ss,
+  rms = c(1, 2), 
+  rmsStep =  1,
+  fcs = 'LQHP',
+  clampSel = FALSE,
+  algMaxent = "maxnet",
+  parallel = TRUE,
+  numCores = 8)
+```
+
+### Visualize
+
+Generate a map of the maxnet generated model with no threshold
+
+```{r}
+# Select current model and obtain raster prediction
+m_Ss <- model_Ss@models[["fc.LQHP_rm.2"]]
+predSel_Ss <- predictMaxnet(m_Ss, bgMask_Ss,
+                                          type = "cloglog", 
+                                          clamp = FALSE)
+#Get values of prediction
+mapPredVals_Ss <- getRasterVals(predSel_Ss, "cloglog")
+#Define colors and legend  
+rasCols <- c("#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c")
+legendPal <- colorNumeric(rev(rasCols), mapPredVals_Ss, na.color = 'transparent')
+rasPal <- colorNumeric(rasCols, mapPredVals_Ss, na.color = 'transparent')
+#Generate map
+m <- leaflet() %>% addProviderTiles(providers$Esri.WorldTopoMap) 
+m  %>%
+  leaflet::addLegend("bottomright", pal = legendPal,
+            title = "Predicted Suitability<br>(Training)",
+            values = mapPredVals_Ss, layerId = "train",
+            labFormat = reverseLabel(2, reverse_order = TRUE)) %>% 
+  #add occurrence data
+  addCircleMarkers(data = occs_Ss, lat = ~latitude, lng = ~longitude,
+                   radius = 5, color = 'red', fill = TRUE, fillColor = "red",
+                   fillOpacity = 0.2, weight = 2, popup = ~pop) %>% 
+  ##Add model prediction
+  addRasterImage(predSel_Ss, colors = rasPal, opacity = 0.7,
+                 group = 'vis', layerId = 'mapPred', method = "ngb") %>%
+ ##add background polygons
+  addPolygons(data = bgExt_Ss,fill = FALSE,
+              weight = 4, color = "blue", group = 'proj')
+```
