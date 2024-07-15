@@ -27,11 +27,12 @@ __To be updated__
 - Bioclimatic
     * [CHELSA](https://chelsa-climate.org/)
     * [Worldclim](https://www.worldclim.org/)
-- Terrain
+- Edaphic
     * elevation
     * Slope
     * Exposition
-- Soil
+    * Soil
+- Landcover
 - Primary productivity
 
 ## Data preparation in R/GEE
