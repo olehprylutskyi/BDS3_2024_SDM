@@ -32,6 +32,10 @@ __To be updated__
 
 [GEE Data Catalog](https://developers.google.com/earth-engine/datasets/)
 
+[Sign Up](https://code.earthengine.google.com/register) to the GEE first, and [create a free account](https://youtu.be/3IwfRW8bjmo?si=_WbeUUSC7pQa_fnC).
+
+[GEE basics tutorial](https://code.earthengine.google.com/2086c1681db9342b676b7a3243983508)
+
 - Bioclimatic
     * [CHELSA](https://chelsa-climate.org/)
     * [Worldclim](https://www.worldclim.org/)
