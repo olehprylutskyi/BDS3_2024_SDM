@@ -20,6 +20,14 @@ __To be updated__
 
 [A curated list of R packages for ecological niche modelling](https://www.sciencedirect.com/science/article/pii/S0304380022003404?via%3Dihub)
 
+## Species occurrence data
+
+[Global Biodiversity Inforamtion Facility](https://www.gbif.org/) - biodiversity data aggregator
+
+[rgbif](https://docs.ropensci.org/rgbif/articles/getting_occurrence_data.html) - R package to access GBIF data
+
+[spocc](https://docs.ropensci.org/spocc/) - Species occurrence data toolkit for R
+
 ## Environmental data
 
 [GEE Data Catalog](https://developers.google.com/earth-engine/datasets/)
