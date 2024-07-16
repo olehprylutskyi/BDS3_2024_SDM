@@ -52,6 +52,8 @@ __To be updated__
 ## GUI tools
 [QGIS Desktop](https://qgis.org/)
 
+[Extra basemaps for QGIS](https://bnhr.xyz/2018/10/07/basemaps-in-qgis.html) - Python code to add convenient satellite/terrain/route webmaps to QGIS canva.
+
 [MaxEnt](https://biodiversityinformatics.amnh.org/open_source/maxent/)
 
 [Wallace Ecological Modelling App](https://wallaceecomod.github.io/)
