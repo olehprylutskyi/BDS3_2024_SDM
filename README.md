@@ -42,6 +42,8 @@ __To be updated__
 - Multicollinearity issue
 
 ## GUI tools
+[QGIS Desktop](https://qgis.org/)
+
 [MaxEnt](https://biodiversityinformatics.amnh.org/open_source/maxent/)
 
 [Wallace Ecological Modelling App](https://wallaceecomod.github.io/)
