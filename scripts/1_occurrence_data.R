@@ -37,9 +37,9 @@ occs_Ss <- queryDb_Ss$Salamandra_salamandra$cleaned
 
 # Occurrence data cleaning
 occs <- occs %>% 
-  filter('conditions-you-specified') %>% 
-  select('columns-you-need') %>% 
-  rename('x' = "decimalLongitude", 'y' = "decimalLatitude")
+  filter(conditions-you-specified) %>% 
+  select(columns-you-need) %>% 
+  rename(x = decimalLongitude, y = decimalLatitude)
 
 # Spatial thinning
 thinDist <- 2 # the distance (in kilometers) that you want records to be separated by.
