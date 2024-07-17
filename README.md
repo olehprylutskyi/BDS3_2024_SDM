@@ -30,13 +30,17 @@ __To be updated__
 
 ## Environmental data
 
-[GEE Data Catalog](https://developers.google.com/earth-engine/datasets/)
+[GEE Data Catalog](https://developers.google.com/earth-engine/datasets/) - the official data repository.
+
+[GEE Community Catalog](https://developers.google.com/earth-engine/datasets/community/sat-io) - additional data.
 
 [Sign Up](https://code.earthengine.google.com/register) to the GEE first, and [create a free account](https://youtu.be/3IwfRW8bjmo?si=_WbeUUSC7pQa_fnC).
 
 [GEE basics tutorial](https://code.earthengine.google.com/2086c1681db9342b676b7a3243983508). See [official documentation](https://developers.google.com/earth-engine/guides) for more examples.
 
 [Sample dataset workflow example](https://code.earthengine.google.com/ebe2c40e67fc1eb2e63af38aeca19960).
+
+[Formules and explanations for spectral indices](https://awesome-ee-spectral-indices.readthedocs.io/en/latest/), and [GEE library for ready-to-use indices](https://ee-spectral.readthedocs.io/en/latest/).
 
 - Bioclimatic
     * [CHELSA](https://chelsa-climate.org/)
