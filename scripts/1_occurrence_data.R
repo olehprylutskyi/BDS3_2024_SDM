@@ -122,3 +122,22 @@ maxThin <- output[[ifelse(length(maxThin) > 1, maxThin[1], maxThin)]]
 occv.th <- occv[occ.df[as.numeric(rownames(maxThin)),]]
 plot(occv.th, cex = 1)
 
+# Set background points
+# Set number of background points simulated. as 5 times num. of presence points
+bgNumPoints <- nrow(occv.th) * 100
+# Or specify it manually
+library(sp)
+backgr <- spsample(your-modelling-polygon, bgNumPoints, type = "random") # Use bgExt if you want to sample bg points from buffered polygon (supposed to increase variation coverage)
+
+# ## Remove duplicates and NAs from the background
+# # Extract predictors` values from raster stack
+# backgr_vals_Ss <- as.data.frame(raster::extract(covs, backgr@coords, cellnumbers = TRUE))
+
+# # Remove duplicated same cell values
+# backgr <- backgr[!duplicated(backgr_vals_Ss[, 1]), ] # from background spatial points
+# backgr_vals_Ss <- backgr_vals_Ss[!duplicated(backgr_vals_Ss[, 1]), -1] # from extracted predictors
+
+# # remove points with NA environmental values
+# backgr <- backgr[!(rowSums(is.na(backgr_vals_Ss)) >= 1), ]
+# # also remove variable value rows with NA environmental values
+# backgr_vals_Ss <- na.omit(backgr_vals_Ss)
