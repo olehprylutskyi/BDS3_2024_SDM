@@ -162,3 +162,53 @@ backgr <- spsample(convex_hull_sp, bgNumPoints, type = "random") # Use bgExt if 
 # backgr <- backgr[!(rowSums(is.na(backgr_vals_Ss)) >= 1), ]
 # # also remove variable value rows with NA environmental values
 # backgr_vals_Ss <- na.omit(backgr_vals_Ss)
+
+
+# remove background points with NA environmental values
+bgr <- bgr[!(rowSums(is.na(bgr)) >= 1), ]
+
+# Explore data for possible multicollinearity
+# Plot it
+pairs(data[,first_num_var:last_num_var], # only numerical variables
+  cex=0.1)
+
+# {covsel} approach - a bit blind!
+library(covsel)
+# Bind covatiates values for presence and background points
+covdata <- rbind(occ.pr, bgr)
+# Bind presence (1) and background (0) values
+pa <- c(rep(1, length(occ$species)), rep(0, nrow(bgr)))
+
+dim(covdata)
+# Filter all covariates by pairvise Pearson correlation
+# directly on the whole set
+covdata_filter <- covsel.filteralgo(covdata = covdata,
+                                    pa = pa,
+                                    corcut = 0.7) # default value
+
+collinearity.filtering.direct <- colnames(covdata_filter)
+
+
+# Variance Inflation Factor
+library(usdm)
+
+# Example of environmental variables
+envVars <- data.frame(var1 = c(1:100),
+                      var2 = c(101:200))
+
+vif(envVars) # calculates vif for the variables in r
+
+# Other functions (work for stacks of local raster predictors)
+v1 <- vifcor(envVars, th = 0.9) # identify collinear variables that should be excluded
+
+v1
+
+v2 <- vifstep(envVars, th = 10) # identify collinear variables that should be excluded
+
+v2
+
+
+
+
+
+# Data partitioning
