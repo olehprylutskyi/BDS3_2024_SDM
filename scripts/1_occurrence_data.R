@@ -123,11 +123,32 @@ occv.th <- occv[occ.df[as.numeric(rownames(maxThin)),]]
 plot(occv.th, cex = 1)
 
 # Set background points
+
+
+# Load necessary libraries
+library(terra)
+library(sp)
+
+
+# Create the convex hull around spatVector (terra) points
+convex_hull <- convHull(occv.th)
+
+# Convert the SpatVector (polygon) to an sp object
+library(raster)
+convex_hull_sp <- as(convex_hull, "Spatial")
+
+# Print the sp object
+print(convex_hull_sp)
+# Plot the convex hull
+plot(convex_hull_sp)
+
+
+
 # Set number of background points simulated. as 5 times num. of presence points
 bgNumPoints <- nrow(occv.th) * 100
 # Or specify it manually
 library(sp)
-backgr <- spsample(your-modelling-polygon, bgNumPoints, type = "random") # Use bgExt if you want to sample bg points from buffered polygon (supposed to increase variation coverage)
+backgr <- spsample(convex_hull_sp, bgNumPoints, type = "random") # Use bgExt if you want to sample bg points from buffered polygon (supposed to increase variation coverage)
 
 # ## Remove duplicates and NAs from the background
 # # Extract predictors` values from raster stack
