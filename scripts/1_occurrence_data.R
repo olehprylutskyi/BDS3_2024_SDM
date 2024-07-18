@@ -113,7 +113,7 @@ output <- spThin::thin(loc.data = occ.df, lat.col = "y",
                        write.log.file = FALSE, 
                        verbose = FALSE,
                        locs.thinned.list.return = FALSE,
-                       write.files = TRUE)
+                       write.files = FALSE)
 
 # pull thinned dataset with max records, not just the first in the list
 maxThin <- which(sapply(output, nrow) == max(sapply(output, nrow)))
@@ -208,7 +208,5 @@ v2 <- vifstep(envVars, th = 10) # identify collinear variables that should be ex
 v2
 
 
-
-
-
 # Data partitioning
+# See https://rspatial.org/sdm/5_sdm_models.html
