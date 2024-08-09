@@ -3,6 +3,8 @@
 
 The repository contains materials for the projects related to the Species Distribution Modelling (SDM), carried out during the [Biological Data Science Summer School](https://www.bds3.org/), 7-20 July 2024, Uzhhorod, Ukraine.
 
+![Acer negundo ensemble prediction](https://github.com/olehprylutskyi/BDS3_2024_SDM/blob/main/figures/ensemble_prediction.png)
+
 __To be updated__
 
 [Common mistakes in ecological niche models](https://doi.org/10.1080/13658816.2020.1798968)
