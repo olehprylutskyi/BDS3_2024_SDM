@@ -91,7 +91,11 @@ occs <- occs[!is.na(occs$x) & !is.na(occs$y),]
 occs$x <- round(occs$x, 5)
 occs$y <- round(occs$y, 5)
 
-# remove spatial duplicates
+
+# Removing occurrences that have the same coordinates is good practice to
+# avoid pseudoreplication.
+occs <- occs[!duplicated(occs),]
+# or run
 occs <- unique(occs)
 
 # Convert to `terra` spatVector
@@ -210,3 +214,4 @@ v2
 
 # Data partitioning
 # See https://rspatial.org/sdm/5_sdm_models.html
+
