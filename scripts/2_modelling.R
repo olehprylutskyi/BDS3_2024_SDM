@@ -43,7 +43,7 @@ sdmdata <- rbind(train, background)
 # Modelling
 m1 <- glm(
   # formula. . indicates all variables except "pb" are used as predictors
-  pb ~ bio02 + bio05 + bio06 + bio12 + bio15+ dem,
+  pb ~ bio02 + bio05 + bio06 + bio12 + bio15 + dem,
   family = binomial, # since our response is binary (1 or 0)
   data = sdmdata     # data containing responce and predictor variables
 )
